@@ -1,0 +1,1329 @@
+<!DOCTYPE html>
+<html lang="lt">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Mokomės Anglų! 🐾</title>
+    <meta name="description"
+        content="Smagus anglų kalbos mokymosi žaidimas vaikams. Išmok gyvūnų, spalvų ir skaičių pavadinimus angliškai!">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Nunito:wght@400;700;900&display=swap"
+        rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-color: #81D4FA;
+            --card-bg: #FFFFFF;
+            --text-color: #263238;
+            --border-color: #263238;
+            --border-width: 3px;
+            --shadow-offset: 6px;
+        }
+
+        * {
+            -webkit-tap-highlight-color: transparent;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            /* Simple pattern */
+            background-image: 
+                radial-gradient(#4FC3F7 20%, transparent 20%),
+                radial-gradient(#4FC3F7 20%, transparent 20%);
+            background-position: 0 0, 50px 50px;
+            background-size: 100px 100px;
+            
+            font-family: 'Baloo 2', cursive; /* Use round font everywhere */
+            color: var(--text-color);
+            min-height: 100vh;
+            padding: 20px 0;
+        }
+
+        h1, h2, h3, button, .btn {
+            font-family: 'Baloo 2', cursive;
+            letter-spacing: 0.5px;
+        }
+
+        /* === CARTOON CARD === */
+        .game-card, .modal-card {
+            background: var(--card-bg);
+            border: var(--border-width) solid var(--border-color);
+            border-radius: 25px;
+            box-shadow: var(--shadow-offset) var(--shadow-offset) 0px rgba(0,0,0,0.2);
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* === CARTOON BUTTONS === */
+        .btn {
+            border: var(--border-width) solid var(--border-color) !important;
+            border-radius: 50px !important;
+            box-shadow: 0 var(--shadow-offset) 0 var(--border-color) !important;
+            font-weight: 800 !important;
+            text-transform: uppercase;
+            transition: all 0.15s ease !important;
+            position: relative;
+            top: 0;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 calc(var(--shadow-offset) + 2px) 0 var(--border-color) !important;
+        }
+
+        .btn:active {
+            transform: translateY(var(--shadow-offset)) !important;
+            box-shadow: 0 0 0 var(--border-color) !important;
+            top: 0;
+        }
+
+        /* Button Colors */
+        .btn-primary, .btn-start.btn-primary { background: #FFD54F !important; color: #333 !important; }
+        .btn-success, .btn-start.btn-success, .btn-confirm { background: #AED581 !important; color: #333 !important; }
+        .btn-danger, .btn-start.btn-danger, .btn-cancel { background: #FF8A65 !important; color: #333 !important; }
+        .btn-info, .btn-start.btn-info { background: #4DD0E1 !important; color: #333 !important; }
+        .btn-warning, .btn-start.btn-warning { background: #FFF176 !important; color: #333 !important; }
+        
+        /* === GAME OPTIONS - HUGE TEXT === */
+        .btn-option {
+            background: white !important;
+            color: #333 !important;
+            font-size: 1.4rem !important; /* Smaller text for row layout */
+            font-weight: 900 !important;
+            min-height: 80px !important;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+        }
+        
+        .btn-correct {
+            background: #AED581 !important; /* Light Green */
+            color: #33691E !important;
+        }
+        
+        .btn-wrong {
+            background: #FF8A65 !important; /* Light Red */
+            color: #BF360C !important;
+            animation: shake 0.4s ease;
+        }
+
+        /* === LESSON CARDS === */
+        .lesson-card {
+            border: var(--border-width) solid var(--border-color);
+            border-radius: 20px;
+            padding: 20px;
+            background: white;
+            box-shadow: 4px 4px 0 rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+            text-align: center;
+            cursor: pointer;
+            border-bottom-width: 8px !important;
+            border-right-width: 4px !important;
+        }
+        
+        .lesson-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .lesson-card:active {
+            transform: translateY(4px) scale(0.98) !important;
+            border-bottom-width: 4px !important;
+        }
+
+        .lesson-icon {
+            font-size: 4.5rem;
+            display: block;
+            margin-bottom: 10px;
+            filter: drop-shadow(0 8px 16px rgba(0,0,0,0.15));
+        }
+        
+        .lesson-title {
+            font-size: 2.2rem;
+            font-weight: 900;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        /* === HEADER === */
+        .app-header {
+            background: #FFF9C4; /* Light Yellow */
+            border: var(--border-width) solid var(--border-color);
+            border-radius: 20px;
+            padding: 15px 25px;
+            box-shadow: 4px 4px 0 rgba(0,0,0,0.1);
+        }
+
+        .score-badge {
+            background: #FFD54F;
+            border: 3px solid var(--border-color);
+            border-radius: 50px;
+            padding: 8px 20px;
+            box-shadow: 2px 2px 0 rgba(0,0,0,0.1);
+            font-weight: 900;
+            color: #333;
+            font-size: 2.2rem;
+        }
+        
+        .btn-home, .btn-prizes {
+            padding: 12px 24px !important;
+            font-size: 1.8rem !important;
+        }
+
+        /* === PRIZES === */
+        .prize-item {
+            background: white;
+            border: 3px solid var(--border-color);
+            border-radius: 20px;
+            padding: 15px;
+            box-shadow: 3px 3px 0 rgba(0,0,0,0.1);
+            min-height: 160px;
+            cursor: pointer;
+        }
+        
+        .prize-emoji {
+            font-size: 3.8rem;
+            margin-bottom: 8px;
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.15));
+        }
+        
+        .prize-name {
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: #37474F;
+            margin-top: 5px;
+        }
+        
+        .prize-badge {
+            font-size: 1rem;
+            padding: 5px 10px;
+            font-weight: 800;
+        }
+        
+        .prize-item.unlocked {
+            background: #FFF59D; /* Yellow highlight */
+            border-color: #FBC02D;
+        }
+
+        /* === UTILS === */
+        .view-hidden { display: none !important; }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-5px); }
+            40%, 80% { transform: translateX(5px); }
+        }
+        
+        /* Modal Overlay */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-card {
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            padding: 40px;
+        }
+
+        .modal-icon {
+            font-size: 7rem;
+            margin-bottom: 15px;
+            filter: drop-shadow(0 10px 20px rgba(0,0,0,0.2));
+        }
+        
+        /* Navigation & Learn Buttons */
+        .btn-nav {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            font-size: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: white;
+            border: var(--border-width) solid var(--border-color);
+            box-shadow: 0 4px 0 var(--border-color);
+        }
+        
+        .btn-nav:active {
+            transform: translateY(4px);
+            box-shadow: none;
+        }
+        
+        /* Typography Sizes for Kids */
+        .menu-title { font-size: 3.5rem; font-weight: 900; color: #E65100; text-shadow: 2px 2px 0 white; }
+        .prizes-title { font-size: 3rem; font-weight: 900; }
+        .word-lt { 
+            font-size: 5rem; 
+            font-weight: 900; 
+            color: #1565C0; 
+            margin-bottom: 30px;
+            text-shadow: 3px 3px 0 rgba(255,255,255,0.5);
+        }
+        .feedback-text { font-size: 3rem; font-weight: 900; }
+        
+        /* Icons in Game and Learn */
+        .main-icon {
+            font-size: clamp(80px, 20vw, 130px);
+            filter: drop-shadow(0 10px 20px rgba(0,0,0,0.2));
+            line-height: 1.2;
+        }
+
+        .learn-icon {
+            font-size: clamp(140px, 35vw, 240px);
+            filter: drop-shadow(0 12px 25px rgba(0,0,0,0.15));
+            line-height: 1.2;
+        }
+
+        /* Learn Card */
+        .learn-card {
+            background: #E1F5FE;
+            border: var(--border-width) solid var(--border-color);
+            border-radius: 30px;
+            padding: 40px;
+        }
+        
+        .learn-word-en {
+            font-size: 4.5rem;
+            line-height: 1.1;
+            margin-bottom: 10px;
+            color: #D81B60;
+            text-shadow: 2px 2px 0 rgba(0,0,0,0.1);
+            font-weight: 900;
+        }
+
+        .learn-word-lt {
+            font-size: 3rem;
+            color: #546E7A;
+            font-weight: 800;
+        }
+        
+        /* Spacing */
+        .row.g-3 { --bs-gutter-y: 2rem; --bs-gutter-x: 2rem; }
+        
+        /* Learn Arrows Overlay */
+        .arrow-left, .arrow-right {
+            background: white;
+            border: 3px solid #CFD8DC;
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            font-size: 2rem;
+            z-index: 10;
+            box-shadow: 0 4px 0 #B0BEC5;
+        }
+        
+        .arrow-left:active, .arrow-right:active {
+            transform: translateY(4px);
+            box-shadow: none;
+        }
+
+        @media (max-width: 768px) {
+            .arrow-left, .arrow-right {
+                position: absolute;
+                top: 50%;
+                transform: translateY(-50%);
+                width: 50px;
+                height: 50px;
+                font-size: 1.5rem;
+                opacity: 0.8;
+            }
+            .arrow-left { left: 5px; }
+            .arrow-right { right: 5px; }
+            
+            .learn-card {
+                margin: 0 50px !important;
+            }
+            
+            .btn-option { font-size: 1.2rem !important; min-height: 70px !important; }
+        }
+    </style>
+</head>
+
+<body class="py-3 py-md-4">
+
+    <div class="container" style="max-width: 1100px;">
+
+        <!-- HEADER -->
+        <div class="app-header d-flex justify-content-between align-items-center mb-3 mb-md-4">
+            <button id="header-home-btn" class="btn btn-home" onclick="showView('menu')" aria-label="Grįžti į meniu">
+                🏠
+            </button>
+            <button class="btn btn-prizes" onclick="showView('prizes')" aria-label="Atidaryti prizų langą">
+                🎁 Prizai
+            </button>
+            <div class="score-badge">
+                <span class="star-icon">⭐</span>
+                <span id="score" class="score-text score-value">0</span>
+            </div>
+        </div>
+
+        <!-- MENU VIEW -->
+        <div id="view-menu" class="game-card p-4 p-md-5 text-center">
+            <h1 class="menu-title">🎓 Mokomės Anglų!</h1>
+            <p class="menu-subtitle mb-4" style="font-size: 1.5rem;">Pasirink pamoką ir pradėk mokytis</p>
+
+            <div class="row g-3 g-md-4" id="lessons-grid">
+                <!-- Lessons will be generated here -->
+            </div>
+        </div>
+
+        <!-- LEARN VIEW (REVISED) -->
+        <div id="view-learn" class="game-card p-0 view-hidden" style="border: none; background: transparent; box-shadow: none;">
+            
+            <!-- Close Button (Top Left) -->
+            <button class="btn btn-home" onclick="showView('menu')" style="position: absolute; top: 10px; left: 10px; z-index: 100; padding: 10px 20px;">
+                🏠
+            </button>
+
+            <!-- Main Content Area -->
+            <div class="d-flex align-items-center justify-content-center h-100" style="min-height: 70vh;">
+                
+                <!-- Prev Arrow -->
+                <button class="btn btn-nav arrow-left" onclick="prevLearnCard()">⬅️</button>
+
+                <!-- Card -->
+                <div id="learn-card" class="learn-card flex-grow-1 mx-3 text-center" onclick="replayLearnSound()" style="max-width: 600px; padding: 30px;">
+                    <div id="learn-icon" class="learn-icon">🐶</div>
+                    <div id="learn-word-en" class="learn-word-en">DOG</div>
+                    <div id="learn-word-lt" class="learn-word-lt">Šuo</div>
+                    <div id="learn-progress" class="text-muted mt-3 fw-bold" style="font-size: 1.2rem;">1 / 12</div>
+                </div>
+
+                <!-- Next Arrow -->
+                <button class="btn btn-nav arrow-right" onclick="nextLearnCard()">➡️</button>
+            </div>
+            
+            <!-- "Go Play" Button (Bottom) -->
+            <div class="text-center mt-3">
+                <button class="btn btn-start btn-primary" style="font-size: 1.5rem; padding: 10px 40px;" onclick="switchToGameFromLearn()">
+                    ▶️ Eiti žaisti!
+                </button>
+            </div>
+        </div>
+
+        <!-- GAME VIEW -->
+        <div id="view-game" class="game-card p-4 p-md-5 text-center view-hidden">
+
+            <!-- Current Lesson Badge -->
+            <div class="d-flex justify-content-center mb-3">
+                <div class="lesson-badge" style="font-size: 1.5rem;">
+                    <span id="current-lesson-icon">🐶</span>
+                    <span id="current-lesson-title">Gyvūnai</span>
+                </div>
+            </div>
+
+            <div class="py-3 py-md-4">
+                <div class="main-icon-wrapper">
+                    <div id="q-icon" class="main-icon" onclick="playCurrentWord()" role="button"
+                        aria-label="Spustelėk norėdamas išgirsti žodį">🐶</div>
+                    <div class="tap-hint" style="font-size: 1.2rem;">🔊 Spustelėk!</div>
+                </div>
+            </div>
+
+            <h2 id="q-lt" class="word-lt fw-bold">ŠUO</h2>
+
+            <div class="row g-2 g-md-3 justify-content-center" id="options-grid">
+                <!-- Options will be generated here -->
+            </div>
+
+            <div class="feedback-area mt-4">
+                <div id="feedback" class="feedback-text"></div>
+            </div>
+        </div>
+
+        <!-- PRIZES VIEW -->
+        <div id="view-prizes" class="game-card p-4 p-md-5 text-center view-hidden">
+
+            <div class="prizes-header">
+                <h2 class="prizes-title">🏆 Tavo Prizai!</h2>
+                <p class="prizes-subtitle" style="font-size: 1.5rem;">Rink žvaigždutes ir atrakink visus!</p>
+            </div>
+
+            <div class="row g-3" id="prizes-grid">
+                <!-- Prizes will be generated here -->
+            </div>
+
+            <button class="btn btn-back mt-4" style="font-size: 1.8rem; padding: 15px 30px;" onclick="showView('menu')">
+                ⬅️ Grįžti į meniu
+            </button>
+        </div>
+
+    </div>
+
+    <!-- BUY CONFIRMATION MODAL -->
+    <div id="buy-modal" class="modal-overlay view-hidden">
+        <div class="modal-card">
+            <h3 class="modal-title" style="font-size: 2.2rem;">Ar nori pirkti?</h3>
+            <div id="modal-prize-icon" class="modal-icon">🎁</div>
+            <div id="modal-prize-name" class="modal-name" style="font-size: 2rem;">Prizas</div>
+            <div class="modal-cost" style="font-size: 1.8rem;">Kaina: <span id="modal-prize-cost">0</span> ⭐</div>
+            
+            <div class="modal-actions">
+                <button class="btn btn-cancel" style="font-size: 1.5rem; padding: 15px 30px;" onclick="closeBuyModal()">❌ Ne</button>
+                <button class="btn btn-confirm" style="font-size: 1.5rem; padding: 15px 30px;" onclick="confirmBuy()">✅ Taip!</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confetti Container -->
+    <div id="confetti-container" class="confetti-container"></div>
+
+    <script>
+        // ========================================
+        // 1. DATA
+        // ========================================
+        const lessons = {
+            animals: {
+                title: "Gyvūnai",
+                icon: "🐶",
+                color: "btn-primary",
+                data: [
+                    { id: 'dog', lt: "Šuo", en: "Dog", icon: "🐶" },
+                    { id: 'cat', lt: "Katė", en: "Cat", icon: "🐱" },
+                    { id: 'lion', lt: "Liūtas", en: "Lion", icon: "🦁" },
+                    { id: 'tiger', lt: "Tigras", en: "Tiger", icon: "🐯" },
+                    { id: 'bear', lt: "Meška", en: "Bear", icon: "🐻" },
+                    { id: 'rabbit', lt: "Zuikis", en: "Rabbit", icon: "🐰" },
+                    { id: 'fox', lt: "Lapė", en: "Fox", icon: "🦊" },
+                    { id: 'pig', lt: "Kiaulė", en: "Pig", icon: "🐷" },
+                    { id: 'cow', lt: "Karvė", en: "Cow", icon: "🐮" },
+                    { id: 'mouse', lt: "Pelė", en: "Mouse", icon: "🐭" },
+                    { id: 'frog', lt: "Varlė", en: "Frog", icon: "🐸" },
+                    { id: 'elephant', lt: "Dramblys", en: "Elephant", icon: "🐘" }
+                ]
+            },
+            colors: {
+                title: "Spalvos",
+                icon: "🎨",
+                color: "btn-danger",
+                data: [
+                    { id: 'red', lt: "Raudona", en: "Red", icon: "🔴" },
+                    { id: 'blue', lt: "Mėlyna", en: "Blue", icon: "🔵" },
+                    { id: 'green', lt: "Žalia", en: "Green", icon: "🟢" },
+                    { id: 'yellow', lt: "Geltona", en: "Yellow", icon: "🟡" },
+                    { id: 'orange', lt: "Oranžinė", en: "Orange", icon: "🟠" },
+                    { id: 'purple', lt: "Violetinė", en: "Purple", icon: "🟣" },
+                    { id: 'black', lt: "Juoda", en: "Black", icon: "⚫" },
+                    { id: 'white', lt: "Balta", en: "White", icon: "⚪" },
+                    { id: 'brown', lt: "Ruda", en: "Brown", icon: "🟤" }
+                ]
+            },
+            numbers: {
+                title: "Skaičiai",
+                icon: "💯",
+                color: "btn-success",
+                data: [
+                    { id: '1', lt: "Vienas", en: "One", icon: "1️⃣" },
+                    { id: '2', lt: "Du", en: "Two", icon: "2️⃣" },
+                    { id: '3', lt: "Trys", en: "Three", icon: "3️⃣" },
+                    { id: '4', lt: "Keturi", en: "Four", icon: "4️⃣" },
+                    { id: '5', lt: "Penki", en: "Five", icon: "5️⃣" },
+                    { id: '6', lt: "Šeši", en: "Six", icon: "6️⃣" },
+                    { id: '7', lt: "Septyni", en: "Seven", icon: "7️⃣" },
+                    { id: '8', lt: "Aštuoni", en: "Eight", icon: "8️⃣" },
+                    { id: '9', lt: "Devyni", en: "Nine", icon: "9️⃣" },
+                    { id: '10', lt: "Dešimt", en: "Ten", icon: "🔟" }
+                ]
+            },
+            food: {
+                title: "Maistas",
+                icon: "🍎",
+                color: "btn-warning",
+                data: [
+                    { id: 'apple', lt: "Obuolys", en: "Apple", icon: "🍎" },
+                    { id: 'banana', lt: "Bananas", en: "Banana", icon: "🍌" },
+                    { id: 'milk', lt: "Pienas", en: "Milk", icon: "🥛" },
+                    { id: 'bread', lt: "Duona", en: "Bread", icon: "🍞" },
+                    { id: 'cheese', lt: "Sūris", en: "Cheese", icon: "🧀" },
+                    { id: 'icecream', lt: "Ledai", en: "Ice Cream", icon: "🍦" },
+                    { id: 'cake', lt: "Tortas", en: "Cake", icon: "🎂" },
+                    { id: 'egg', lt: "Kiaušinis", en: "Egg", icon: "🥚" },
+                    { id: 'pizza', lt: "Pica", en: "Pizza", icon: "🍕" },
+                    { id: 'water', lt: "Vanduo", en: "Water", icon: "💧" }
+                ]
+            },
+            family: {
+                title: "Šeima",
+                icon: "👨‍👩‍👧",
+                color: "btn-info",
+                data: [
+                    { id: 'mom', lt: "Mama", en: "Mom", icon: "👩" },
+                    { id: 'dad', lt: "Tėtis", en: "Dad", icon: "👨" },
+                    { id: 'brother', lt: "Brolis", en: "Brother", icon: "👦" },
+                    { id: 'sister', lt: "Sesė", en: "Sister", icon: "👧" },
+                    { id: 'baby', lt: "Kūdikis", en: "Baby", icon: "👶" },
+                    { id: 'grandma', lt: "Močiutė", en: "Grandma", icon: "👵" },
+                    { id: 'grandpa', lt: "Senelis", en: "Grandpa", icon: "👴" },
+                    { id: 'family', lt: "Šeima", en: "Family", icon: "👨‍👩‍👧" }
+                ]
+            },
+            body: {
+                title: "Kūnas",
+                icon: "👀",
+                color: "btn-secondary",
+                data: [
+                    { id: 'eye', lt: "Akis", en: "Eye", icon: "👁️" },
+                    { id: 'nose', lt: "Nosis", en: "Nose", icon: "👃" },
+                    { id: 'mouth', lt: "Burna", en: "Mouth", icon: "👄" },
+                    { id: 'ear', lt: "Ausis", en: "Ear", icon: "👂" },
+                    { id: 'hand', lt: "Ranka", en: "Hand", icon: "✋" },
+                    { id: 'leg', lt: "Koja", en: "Leg", icon: "🦵" },
+                    { id: 'head', lt: "Galva", en: "Head", icon: "🗣️" },
+                    { id: 'hair', lt: "Plaukai", en: "Hair", icon: "💇" }
+                ]
+            },
+            pronouns: {
+                title: "Asmenys",
+                icon: "👤",
+                color: "btn-dark",
+                data: [
+                    { id: 'i', lt: "Aš", en: "I", icon: "🙋" },
+                    { id: 'you', lt: "Tu", en: "You", icon: "🫵" },
+                    { id: 'he', lt: "Jis", en: "He", icon: "👦" },
+                    { id: 'she', lt: "Ji", en: "She", icon: "👧" },
+                    { id: 'we', lt: "Mes", en: "We", icon: "👥" },
+                    { id: 'they', lt: "Jie", en: "They", icon: "👯" }
+                ]
+            },
+            sentences: {
+                title: "Sakiniai",
+                icon: "📖",
+                color: "btn-primary",
+                data: [
+                    { id: 's1', lt: "Aš esu katė", en: "I am a cat", icon: "🐱" },
+                    { id: 's2', lt: "Tu esi šuo", en: "You are a dog", icon: "🐶" },
+                    { id: 's3', lt: "Jis yra tėtis", en: "He is a dad", icon: "👨" },
+                    { id: 's4', lt: "Ji yra mama", en: "She is a mom", icon: "👩" },
+                    { id: 's5', lt: "Tai yra raudona", en: "It is red", icon: "🔴" },
+                    { id: 's6', lt: "Aš mėgstu pieną", en: "I like milk", icon: "🥛" },
+                    { id: 's7', lt: "Mes esame šeima", en: "We are family", icon: "👨‍👩‍👧" },
+                    { id: 's8', lt: "Aš matau zuikį", en: "I see a rabbit", icon: "🐰" }
+                ]
+            },
+            transport: {
+                title: "Transportas",
+                icon: "🚗",
+                color: "btn-danger",
+                data: [
+                    { id: 'car', lt: "Mašina", en: "Car", icon: "🚗" },
+                    { id: 'bus', lt: "Autobusas", en: "Bus", icon: "🚌" },
+                    { id: 'train', lt: "Traukinys", en: "Train", icon: "🚆" },
+                    { id: 'bike', lt: "Dviratis", en: "Bike", icon: "🚲" },
+                    { id: 'plane', lt: "Lėktuvas", en: "Plane", icon: "✈️" },
+                    { id: 'boat', lt: "Valtis", en: "Boat", icon: "🚣" },
+                    { id: 'truck', lt: "Sunkvežimis", en: "Truck", icon: "🚛" },
+                    { id: 'taxi', lt: "Taksi", en: "Taxi", icon: "🚕" }
+                ]
+            },
+            clothes: {
+                title: "Drabužiai",
+                icon: "👕",
+                color: "btn-info",
+                data: [
+                    { id: 'shirt', lt: "Marškinėliai", en: "T-shirt", icon: "👕" },
+                    { id: 'pants', lt: "Kelnės", en: "Pants", icon: "👖" },
+                    { id: 'dress', lt: "Suknelė", en: "Dress", icon: "👗" },
+                    { id: 'hat', lt: "Kepurė", en: "Hat", icon: "🧢" },
+                    { id: 'shoes', lt: "Batai", en: "Shoes", icon: "👟" },
+                    { id: 'socks', lt: "Kojinės", en: "Socks", icon: "🧦" },
+                    { id: 'coat', lt: "Paltas", en: "Coat", icon: "🧥" },
+                    { id: 'glasses', lt: "Akiniai", en: "Glasses", icon: "👓" }
+                ]
+            },
+            school: {
+                title: "Mokykla",
+                icon: "🎒",
+                color: "btn-success",
+                data: [
+                    { id: 'school', lt: "Mokykla", en: "School", icon: "🏫" },
+                    { id: 'book', lt: "Knyga", en: "Book", icon: "📖" },
+                    { id: 'pencil', lt: "Pieštukas", en: "Pencil", icon: "✏️" },
+                    { id: 'pen', lt: "Rašiklis", en: "Pen", icon: "🖊️" },
+                    { id: 'bag', lt: "Kuprinė", en: "Bag", icon: "🎒" },
+                    { id: 'desk', lt: "Stalas", en: "Desk", icon: "🪑" },
+                    { id: 'teacher', lt: "Mokytoja", en: "Teacher", icon: "👩‍🏫" },
+                    { id: 'computer', lt: "Kompiuteris", en: "Computer", icon: "💻" }
+                ]
+            },
+            toys: {
+                title: "Žaislai",
+                icon: "🧸",
+                color: "btn-warning",
+                data: [
+                    { id: 'doll', lt: "Lėlė", en: "Doll", icon: "🎎" },
+                    { id: 'teddy', lt: "Meškiukas", en: "Teddy Bear", icon: "🧸" },
+                    { id: 'ball', lt: "Kamuolys", en: "Ball", icon: "⚽" },
+                    { id: 'robot', lt: "Robotas", en: "Robot", icon: "🤖" },
+                    { id: 'kite', lt: "Aitvaras", en: "Kite", icon: "🪁" },
+                    { id: 'blocks', lt: "Kaladėlės", en: "Blocks", icon: "🧱" },
+                    { id: 'game', lt: "Žaidimas", en: "Game", icon: "🎮" },
+                    { id: 'yo-yo', lt: "Jojo", en: "Yo-yo", icon: "🪀" }
+                ]
+            },
+            home: {
+                title: "Namai",
+                icon: "🏠",
+                color: "btn-primary",
+                data: [
+                    { id: 'house', lt: "Namas", en: "House", icon: "🏠" },
+                    { id: 'door', lt: "Durys", en: "Door", icon: "🚪" },
+                    { id: 'window', lt: "Langas", en: "Window", icon: "🪟" },
+                    { id: 'bed', lt: "Lova", en: "Bed", icon: "🛏️" },
+                    { id: 'chair', lt: "Kėdė", en: "Chair", icon: "🪑" },
+                    { id: 'table', lt: "Stalas", en: "Table", icon: "🪵" },
+                    { id: 'tv', lt: "Televizorius", en: "TV", icon: "📺" },
+                    { id: 'kitchen', lt: "Virtuvė", en: "Kitchen", icon: "🍳" }
+                ]
+            },
+            nature: {
+                title: "Gamta",
+                icon: "🌳",
+                color: "btn-success",
+                data: [
+                    { id: 'tree', lt: "Medis", en: "Tree", icon: "🌳" },
+                    { id: 'flower', lt: "Gėlė", en: "Flower", icon: "🌸" },
+                    { id: 'sun', lt: "Saulė", en: "Sun", icon: "☀️" },
+                    { id: 'moon', lt: "Mėnulis", en: "Moon", icon: "🌙" },
+                    { id: 'star', lt: "Žvaigždė", en: "Star", icon: "⭐" },
+                    { id: 'cloud', lt: "Debesis", en: "Cloud", icon: "☁️" },
+                    { id: 'rain', lt: "Lietus", en: "Rain", icon: "🌧️" },
+                    { id: 'snow', lt: "Sniegas", en: "Snow", icon: "❄️" }
+                ]
+            },
+            vegetables: {
+                title: "Daržovės",
+                icon: "🥕",
+                color: "btn-danger",
+                data: [
+                    { id: 'carrot', lt: "Morka", en: "Carrot", icon: "🥕" },
+                    { id: 'potato', lt: "Bulvė", en: "Potato", icon: "🥔" },
+                    { id: 'tomato', lt: "Pomidoras", en: "Tomato", icon: "🍅" },
+                    { id: 'cucumber', lt: "Agurkas", en: "Cucumber", icon: "🥒" },
+                    { id: 'onion', lt: "Svogūnas", en: "Onion", icon: "🧅" },
+                    { id: 'garlic', lt: "Česnakas", en: "Garlic", icon: "🧄" },
+                    { id: 'corn', lt: "Kukurūzas", en: "Corn", icon: "🌽" },
+                    { id: 'salad', lt: "Salotos", en: "Salad", icon: "🥗" }
+                ]
+            },
+            verbs: {
+                title: "Veiksmai",
+                icon: "🏃",
+                color: "btn-secondary",
+                data: [
+                    { id: 'run', lt: "Bėgti", en: "Run", icon: "🏃" },
+                    { id: 'jump', lt: "Šokti", en: "Jump", icon: "🦘" },
+                    { id: 'sleep', lt: "Miegoti", en: "Sleep", icon: "😴" },
+                    { id: 'eat', lt: "Valgyti", en: "Eat", icon: "🍽️" },
+                    { id: 'drink', lt: "Gerti", en: "Drink", icon: "🥤" },
+                    { id: 'play', lt: "Žaisti", en: "Play", icon: "🎮" },
+                    { id: 'read', lt: "Skaityti", en: "Read", icon: "📖" },
+                    { id: 'swim', lt: "Plaukti", en: "Swim", icon: "🏊" }
+                ]
+            },
+            feelings: {
+                title: "Jausmai",
+                icon: "😊",
+                color: "btn-warning",
+                data: [
+                    { id: 'happy', lt: "Laimingas", en: "Happy", icon: "😊" },
+                    { id: 'sad', lt: "Liūdnas", en: "Sad", icon: "😢" },
+                    { id: 'angry', lt: "Piktas", en: "Angry", icon: "😠" },
+                    { id: 'tired', lt: "Pavargęs", en: "Tired", icon: "😫" },
+                    { id: 'scared', lt: "Išsigandęs", en: "Scared", icon: "😱" },
+                    { id: 'surprised', lt: "Nustebęs", en: "Surprised", icon: "😲" },
+                    { id: 'hungry', lt: "Alkanas", en: "Hungry", icon: "😋" },
+                    { id: 'thirsty', lt: "Ištroškęs", en: "Thirsty", icon: "🥵" }
+                ]
+            },
+            jobs: {
+                title: "Profesijos",
+                icon: "👮",
+                color: "btn-info",
+                data: [
+                    { id: 'doctor', lt: "Gydytojas", en: "Doctor", icon: "👨‍⚕️" },
+                    { id: 'police', lt: "Policininkas", en: "Police", icon: "👮" },
+                    { id: 'chef', lt: "Virėjas", en: "Chef", icon: "👨‍🍳" },
+                    { id: 'firefighter', lt: "Gaisrininkas", en: "Firefighter", icon: "👨‍🚒" },
+                    { id: 'pilot', lt: "Pilotė", en: "Pilot", icon: "👩‍✈️" },
+                    { id: 'artist', lt: "Dailininkas", en: "Artist", icon: "🎨" },
+                    { id: 'teacher', lt: "Mokytoja", en: "Teacher", icon: "👩‍🏫" },
+                    { id: 'driver', lt: "Vairuotojas", en: "Driver", icon: "🚌" }
+                ]
+            }
+        };
+
+        const prizes = [
+            // Pigūs (10-40)
+            { id: 'p1', name: 'Saldainis', icon: '🍬', cost: 10 },
+            { id: 'p2', name: 'Ledai', icon: '🍦', cost: 15 },
+            { id: 'p3', name: 'Sausainis', icon: '🍪', cost: 15 },
+            { id: 'p4', name: 'Obuolys', icon: '🍎', cost: 20 },
+            { id: 'p5', name: 'Kamuolys', icon: '⚽', cost: 20 },
+            { id: 'p6', name: 'Balionas', icon: '🎈', cost: 25 },
+            { id: 'p7', name: 'Riedlentė', icon: '🛹', cost: 30 },
+            { id: 'p8', name: 'Meškiukas', icon: '🧸', cost: 35 },
+            { id: 'p9', name: 'Dviratis', icon: '🚲', cost: 40 },
+            { id: 'p10', name: 'Būgnai', icon: '🥁', cost: 40 },
+
+            // Vidutiniai (50-100)
+            { id: 'p11', name: 'Mašina', icon: '🚗', cost: 50 },
+            { id: 'p12', name: 'Lėlė', icon: '🎎', cost: 50 },
+            { id: 'p13', name: 'Aitvaras', icon: '🪁', cost: 55 },
+            { id: 'p14', name: 'Robotukas', icon: '🤖', cost: 60 },
+            { id: 'p15', name: 'Pica', icon: '🍕', cost: 65 },
+            { id: 'p16', name: 'Mėsainis', icon: '🍔', cost: 65 },
+            { id: 'p17', name: 'Gitara', icon: '🎸', cost: 70 },
+            { id: 'p18', name: 'Trimitas', icon: '🎺', cost: 75 },
+            { id: 'p19', name: 'Sraigtasparnis', icon: '🚁', cost: 80 },
+            { id: 'p20', name: 'Laivas', icon: '🚢', cost: 85 },
+            { id: 'p21', name: 'Traukinys', icon: '🚂', cost: 90 },
+            { id: 'p22', name: 'Raketė', icon: '🏸', cost: 95 },
+            { id: 'p23', name: 'Taurė', icon: '🏆', cost: 100 },
+            { id: 'p24', name: 'Medalis', icon: '🥇', cost: 100 },
+
+            // Brangesni (120-200)
+            { id: 'p25', name: 'Vienaragis', icon: '🦄', cost: 120 },
+            { id: 'p26', name: 'Dinozauras', icon: '🦖', cost: 130 },
+            { id: 'p27', name: 'Drakonas', icon: '🐉', cost: 140 },
+            { id: 'p28', name: 'Pilis', icon: '🏰', cost: 150 },
+            { id: 'p29', name: 'Karūna', icon: '👑', cost: 160 },
+            { id: 'p30', name: 'Deimantas', icon: '💎', cost: 170 },
+            { id: 'p31', name: 'Žiedas', icon: '💍', cost: 180 },
+            { id: 'p32', name: 'Lobis', icon: '💰', cost: 190 },
+            { id: 'p33', name: 'Kompiuteris', icon: '💻', cost: 200 },
+            { id: 'p34', name: 'Telefonas', icon: '📱', cost: 200 },
+
+            // Labai geri (220-350)
+            { id: 'p35', name: 'Raketa', icon: '🚀', cost: 220 },
+            { id: 'p36', name: 'Astronautas', icon: '👨‍🚀', cost: 230 },
+            { id: 'p37', name: 'Ateivis', icon: '👽', cost: 240 },
+            { id: 'p38', name: 'NSO', icon: '🛸', cost: 250 },
+            { id: 'p39', name: 'Teleskopas', icon: '🔭', cost: 260 },
+            { id: 'p40', name: 'Planeta', icon: '🪐', cost: 270 },
+            { id: 'p41', name: 'Mėnulis', icon: '🌙', cost: 280 },
+            { id: 'p42', name: 'Saulė', icon: '☀️', cost: 300 },
+            { id: 'p43', name: 'Sala', icon: '🏝️', cost: 320 },
+            { id: 'p44', name: 'Ugnikalnis', icon: '🌋', cost: 340 },
+            { id: 'p45', name: 'Vaivorykštė', icon: '🌈', cost: 350 },
+
+            // Super Prizai (360-500)
+            { id: 'p46', name: 'Superherojus', icon: '🦸', cost: 360 },
+            { id: 'p47', name: 'Burtininkas', icon: '🧙‍♂️', cost: 370 },
+            { id: 'p48', name: 'Fėja', icon: '🧚‍♀️', cost: 380 },
+            { id: 'p49', name: 'Džinas', icon: '🧞‍♂️', cost: 390 },
+            { id: 'p50', name: 'Vaiduoklis', icon: '👻', cost: 400 },
+            { id: 'p51', name: 'Moliūgas', icon: '🎃', cost: 410 },
+            { id: 'p52', name: 'Eglutė', icon: '🎄', cost: 420 },
+            { id: 'p53', name: 'Dovana', icon: '🎁', cost: 430 },
+            { id: 'p54', name: 'Fejerverkai', icon: '🎆', cost: 440 },
+            { id: 'p55', name: 'Pasaulis', icon: '🌍', cost: 450 },
+            { id: 'p56', name: 'Galaktika', icon: '🌌', cost: 460 },
+            { id: 'p57', name: 'Žvaigždė', icon: '🌟', cost: 470 },
+            { id: 'p58', name: 'Kometa', icon: '☄️', cost: 480 },
+            { id: 'p59', name: 'Juodoji skylė', icon: '🕳️', cost: 490 },
+            { id: 'p60', name: 'Visata', icon: '✨', cost: 500 }
+        ];
+
+        // ========================================
+        // 2. STATE
+        // ========================================
+        let score = parseInt(localStorage.getItem('kidsEnglish_score')) || 0;
+        let unlockedPrizes = JSON.parse(localStorage.getItem('kidsEnglish_prizes')) || [];
+        let currentLessonKey = null;
+        let currentActiveLesson = null;
+        let currentQuestion = null;
+        let isInputBlocked = false;
+        let streak = 0;
+
+        // ========================================
+        // 3. DOM ELEMENTS
+        // ========================================
+        const scoreEl = document.getElementById('score');
+        const iconEl = document.getElementById('q-icon');
+        const wordLtEl = document.getElementById('q-lt');
+        const optionsGrid = document.getElementById('options-grid');
+        const feedbackEl = document.getElementById('feedback');
+        const lessonsGrid = document.getElementById('lessons-grid');
+        const prizesGrid = document.getElementById('prizes-grid');
+        const currentLessonIconEl = document.getElementById('current-lesson-icon');
+        const currentLessonTitleEl = document.getElementById('current-lesson-title');
+
+        // Views
+        const viewMenu = document.getElementById('view-menu');
+        const viewGame = document.getElementById('view-game');
+        const viewPrizes = document.getElementById('view-prizes');
+        const viewLearn = document.getElementById('view-learn');
+
+        // ========================================
+        // 4. INITIALIZATION
+        // ========================================
+        function init() {
+            updateScoreDisplay();
+            renderLessonsMenu();
+            renderPrizes();
+            showView('menu');
+        }
+
+        // ========================================
+        // 5. VIEW MANAGEMENT
+        // ========================================
+        function showView(viewName) {
+            // Hide all views
+            viewMenu.classList.add('view-hidden');
+            viewGame.classList.add('view-hidden');
+            viewPrizes.classList.add('view-hidden');
+            viewLearn.classList.add('view-hidden');
+
+            // Show requested view
+            switch (viewName) {
+                case 'menu':
+                    viewMenu.classList.remove('view-hidden');
+                    break;
+                case 'game':
+                    viewGame.classList.remove('view-hidden');
+                    break;
+                case 'learn':
+                    viewLearn.classList.remove('view-hidden');
+                    break;
+                case 'prizes':
+                    viewPrizes.classList.remove('view-hidden');
+                    renderPrizes();
+                    break;
+            }
+        }
+
+        // ========================================
+        // 6. LESSONS MENU
+        // ========================================
+        function renderLessonsMenu() {
+            lessonsGrid.innerHTML = '';
+
+            Object.keys(lessons).forEach(key => {
+                const lesson = lessons[key];
+
+                const col = document.createElement('div');
+                col.className = 'col-12 col-md-4';
+
+                const card = document.createElement('div');
+                card.className = `lesson-card lesson-${lesson.color.replace('btn-', '')}`;
+                
+                card.innerHTML = `
+                <span class="lesson-icon">${lesson.icon}</span>
+                <h3 class="lesson-title">${lesson.title}</h3>
+                <div class="d-flex gap-2 justify-content-center">
+                     <button class="btn btn-start ${lesson.color} flex-grow-1" style="font-size: 1rem; padding: 10px;" onclick="startLesson('${key}')">
+                        ▶️ Žaisti
+                    </button>
+                    <button class="btn btn-start btn-light flex-grow-1" style="font-size: 1rem; padding: 10px; border: 2px solid #eee; color: #546E7A;" onclick="startLearn('${key}')">
+                        📖 Mokytis
+                    </button>
+                </div>
+            `;
+
+                col.appendChild(card);
+                lessonsGrid.appendChild(col);
+            });
+        }
+
+        function startLesson(lessonKey) {
+            currentLessonKey = lessonKey;
+            currentActiveLesson = lessons[lessonKey].data;
+            streak = 0; // Reset streak on new lesson start
+
+            // Update lesson badge in game view
+            currentLessonIconEl.innerText = lessons[lessonKey].icon;
+            currentLessonTitleEl.innerText = lessons[lessonKey].title;
+
+            showView('game');
+            loadQuestion();
+        }
+
+        // ========================================
+        // LEARN MODE LOGIC
+        // ========================================
+        let currentLearnIndex = 0;
+
+        function startLearn(lessonKey) {
+            currentLessonKey = lessonKey;
+            currentActiveLesson = lessons[lessonKey].data;
+            currentLearnIndex = 0;
+
+            showView('learn');
+            showLearnCard();
+        }
+
+        function showLearnCard() {
+            const item = currentActiveLesson[currentLearnIndex];
+            
+            // Update content
+            document.getElementById('learn-icon').innerText = item.icon;
+            document.getElementById('learn-word-en').innerText = item.en.toUpperCase();
+            document.getElementById('learn-word-lt').innerText = item.lt;
+            document.getElementById('learn-progress').innerText = `${currentLearnIndex + 1} / ${currentActiveLesson.length}`;
+
+            // Play sound automatically
+            setTimeout(() => playSound(item.en), 300);
+            
+            // Animation
+            const card = document.getElementById('learn-card');
+            card.classList.remove('bounce-anim');
+            void card.offsetWidth; // trigger reflow
+            card.classList.add('bounce-anim');
+        }
+
+        function nextLearnCard() {
+            if (currentLearnIndex < currentActiveLesson.length - 1) {
+                currentLearnIndex++;
+            } else {
+                currentLearnIndex = 0; // Loop back to start
+            }
+            showLearnCard();
+        }
+
+        function prevLearnCard() {
+            if (currentLearnIndex > 0) {
+                currentLearnIndex--;
+            } else {
+                currentLearnIndex = currentActiveLesson.length - 1; // Loop to end
+            }
+            showLearnCard();
+        }
+
+        function replayLearnSound() {
+            const item = currentActiveLesson[currentLearnIndex];
+            playSound(item.en);
+            
+             // Icon Animation
+            const icon = document.getElementById('learn-icon');
+            icon.style.transform = "scale(1.2)";
+            setTimeout(() => icon.style.transform = "scale(1)", 200);
+        }
+        
+        function switchToGameFromLearn() {
+            startLesson(currentLessonKey);
+        }
+
+        // ========================================
+        // 7. GAME LOGIC
+        // ========================================
+        function loadQuestion() {
+            if (!currentActiveLesson) return;
+
+            isInputBlocked = false;
+            hideFeedback();
+            iconEl.classList.remove('bounce-anim');
+
+            // Select random question from current lesson
+            const correct = currentActiveLesson[Math.floor(Math.random() * currentActiveLesson.length)];
+            currentQuestion = correct;
+
+            // Generate 3 wrong + 1 correct options
+            let wrongOptions = currentActiveLesson.filter(item => item.id !== correct.id);
+            shuffleArray(wrongOptions);
+            wrongOptions = wrongOptions.slice(0, 3);
+
+            const allOptions = [...wrongOptions, correct];
+            shuffleArray(allOptions);
+
+            // Update UI
+            iconEl.innerText = correct.icon;
+            wordLtEl.innerText = correct.lt.toUpperCase();
+
+            // Render option buttons
+            optionsGrid.innerHTML = '';
+            allOptions.forEach(option => {
+                const col = document.createElement('div');
+                col.className = 'col-3'; // FORCE ROW LAYOUT
+
+                const btn = document.createElement('button');
+                btn.className = 'btn btn-option w-100';
+                btn.innerText = option.en;
+                btn.setAttribute('data-id', option.id);
+                btn.onclick = () => checkAnswer(option, btn);
+
+                col.appendChild(btn);
+                optionsGrid.appendChild(col);
+            });
+        }
+
+        function checkAnswer(selected, btn) {
+            if (isInputBlocked) return;
+
+            // Play the word
+            playSound(selected.en);
+
+            if (selected.id === currentQuestion.id) {
+                // CORRECT ANSWER
+                isInputBlocked = true;
+                btn.classList.add('btn-correct');
+                iconEl.classList.add('bounce-anim');
+
+                streak++;
+                let points = 10;
+                let msg = "Puiku! 🎉 (+10)";
+
+                // Streak bonus
+                if (streak >= 3) {
+                    points += 5;
+                    msg = `Serija! 🔥 (+${points})`;
+                    createConfetti(12); // Extra confetti for streak
+                } else {
+                    // Small confetti burst
+                    createConfetti(8);
+                }
+
+                showFeedback(msg, "success");
+                addScore(points);
+
+                setTimeout(loadQuestion, 1800);
+            } else {
+                // WRONG ANSWER
+                streak = 0; // Reset streak
+                btn.classList.add('btn-wrong');
+                showFeedback("Bandyk dar! 🤔", "error");
+
+                setTimeout(() => {
+                    btn.classList.remove('btn-wrong');
+                    hideFeedback();
+                }, 1000);
+            }
+        }
+
+        function addScore(amount) {
+            score += amount;
+            updateScoreDisplay();
+            localStorage.setItem('kidsEnglish_score', score);
+        }
+
+        function updateScoreDisplay() {
+            scoreEl.innerText = score;
+            scoreEl.style.animation = 'none';
+            scoreEl.offsetHeight; // Trigger reflow
+            scoreEl.style.animation = 'correct-pop 0.4s ease';
+        }
+
+        // ========================================
+        // 8. AUDIO (Text-to-Speech)
+        // ========================================
+        function playSound(text) {
+            if ('speechSynthesis' in window) {
+                // Cancel any ongoing speech
+                window.speechSynthesis.cancel();
+
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'en-US';
+                utterance.rate = 0.75;
+                utterance.pitch = 1.1;
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+
+        function playCurrentWord() {
+            if (currentQuestion) {
+                playSound(currentQuestion.en);
+                iconEl.classList.add('bounce-anim');
+                setTimeout(() => iconEl.classList.remove('bounce-anim'), 700);
+            }
+        }
+
+        // ========================================
+        // 9. FEEDBACK
+        // ========================================
+        function showFeedback(text, type) {
+            feedbackEl.innerText = text;
+            feedbackEl.className = `feedback-text visible feedback-${type}`;
+        }
+
+        function hideFeedback() {
+            feedbackEl.classList.remove('visible');
+        }
+
+        // ========================================
+        // 10. PRIZES
+        // ========================================
+        function renderPrizes() {
+            prizesGrid.innerHTML = '';
+
+            prizes.forEach(prize => {
+                const isOwned = unlockedPrizes.includes(prize.id);
+                const canAfford = score >= prize.cost;
+
+                const col = document.createElement('div');
+                col.className = 'col-4 col-sm-3';
+
+                const div = document.createElement('div');
+
+                if (isOwned) {
+                    // === OWNED (Spalvotas) ===
+                    div.className = 'prize-item unlocked';
+                    div.innerHTML = `
+                        <div class="prize-emoji">${prize.icon}</div>
+                        <div class="prize-name">${prize.name}</div>
+                        <span class="prize-badge owned">✓ TURI</span>
+                    `;
+                } else if (canAfford) {
+                    // === CAN BUY (Pilkas, bet galima pirkti) ===
+                    div.className = 'prize-item available';
+                    div.style.cursor = 'pointer';
+                    // Pridedame spyną šalia ikonėlės arba ant viršaus
+                    div.innerHTML = `
+                        <div class="prize-emoji" style="filter: grayscale(100%); opacity: 0.7;">${prize.icon}</div>
+                        <div class="prize-name">${prize.name}</div>
+                        <span class="prize-badge can-buy">🛒 PIRKTI</span>
+                        <div style="position:absolute; top:10px; right:10px; font-size:1.2rem;">🔒</div>
+                    `;
+                    div.onclick = () => buyPrize(prize);
+                } else {
+                    // === LOCKED (Pilkas, negalima pirkti) ===
+                    div.className = 'prize-item';
+                    div.innerHTML = `
+                        <div class="prize-emoji" style="filter: grayscale(100%); opacity: 0.4;">${prize.icon}</div>
+                        <div class="prize-name">${prize.name}</div>
+                        <span class="prize-badge locked">${prize.cost} ⭐</span>
+                        <div style="position:absolute; top:10px; right:10px; font-size:1.2rem; opacity:0.5;">🔒</div>
+                    `;
+                }
+
+                col.appendChild(div);
+                prizesGrid.appendChild(col);
+            });
+        }
+
+        // ========================================
+        // MODAL LOGIC
+        // ========================================
+        let pendingPrize = null;
+        const modalEl = document.getElementById('buy-modal');
+
+        function openBuyModal(prize) {
+            pendingPrize = prize;
+            document.getElementById('modal-prize-icon').innerText = prize.icon;
+            document.getElementById('modal-prize-name').innerText = prize.name;
+            document.getElementById('modal-prize-cost').innerText = prize.cost;
+            modalEl.classList.remove('view-hidden');
+            
+            // Play a small sound or effect here if desired
+        }
+
+        function closeBuyModal() {
+            modalEl.classList.add('view-hidden');
+            pendingPrize = null;
+        }
+
+        function confirmBuy() {
+            if (pendingPrize) {
+                completePurchase(pendingPrize);
+            }
+            closeBuyModal();
+        }
+
+        function completePurchase(prize) {
+            // Check if already owned or can't afford (double check)
+            if (unlockedPrizes.includes(prize.id)) return;
+            if (score < prize.cost) return;
+
+            // Deduct points
+            score -= prize.cost;
+            updateScoreDisplay();
+            localStorage.setItem('kidsEnglish_score', score);
+
+            // Add to owned prizes
+            unlockedPrizes.push(prize.id);
+            localStorage.setItem('kidsEnglish_prizes', JSON.stringify(unlockedPrizes));
+
+            // Celebration!
+            createConfetti(25);
+            showFeedback(`Nupirkta: ${prize.name}! 🎉`, 'success');
+
+            // Re-render prizes
+            renderPrizes();
+        }
+
+        // Modified buyPrize function to just open modal
+        function buyPrize(prize) {
+            openBuyModal(prize);
+        }
+
+        // ========================================
+        // 11. CONFETTI EFFECT
+        // ========================================
+        function createConfetti(count) {
+            const container = document.getElementById('confetti-container');
+            const colors = ['#FFD700', '#FF6B9D', '#00C853', '#3D5AFE', '#FF5252', '#9C27B0'];
+
+            for (let i = 0; i < count; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = `${40 + Math.random() * 20}%`;
+                confetti.style.top = '40%';
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+                confetti.style.width = `${8 + Math.random() * 8}px`;
+                confetti.style.height = `${8 + Math.random() * 8}px`;
+
+                container.appendChild(confetti);
+
+                // Animate
+                const angle = (Math.random() - 0.5) * 120;
+                const velocity = 300 + Math.random() * 200;
+                const vx = Math.sin(angle * Math.PI / 180) * velocity;
+                const vy = -Math.cos(angle * Math.PI / 180) * velocity;
+
+                let x = 0, y = 0;
+                let opacity = 1;
+                const gravity = 600;
+                let startTime = null;
+
+                function animate(time) {
+                    if (!startTime) startTime = time;
+                    const elapsed = (time - startTime) / 1000;
+
+                    x = vx * elapsed;
+                    y = vy * elapsed + 0.5 * gravity * elapsed * elapsed;
+                    opacity = Math.max(0, 1 - elapsed / 1.5);
+
+                    confetti.style.transform = `translate(${x}px, ${y}px) rotate(${elapsed * 360}deg)`;
+                    confetti.style.opacity = opacity;
+
+                    if (opacity > 0) {
+                        requestAnimationFrame(animate);
+                    } else {
+                        confetti.remove();
+                    }
+                }
+
+                requestAnimationFrame(animate);
+            }
+        }
+
+        // ========================================
+        // 12. UTILITIES
+        // ========================================
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        // ========================================
+        // START APP
+        // ========================================
+        init();
+    </script>
+
+</body>
+
+</html>
