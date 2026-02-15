@@ -1,43 +1,38 @@
-# Projekto įkėlimas į GitHub
+# App English — Mokomės Anglų!
 
-Šiame faile pateikiama instrukcija, kaip įkelti „Mokomės Anglų!“ programėlės failus į GitHub saugyklą.
+Edukacinė anglų kalbos mokymosi programėlė 6 metų vaikams.
 
-## Saugyklos informacija
-- **URL:** [https://github.com/andriusgodeliauskas/app-english](https://github.com/andriusgodeliauskas/app-english)
+## Informacija
 
-## Komandos įkėlimui
+- **Tipas:** Statinis HTML (vienas failas)
+- **Technologijos:** HTML5, CSS3, Vanilla JavaScript, Bootstrap 5.3
+- **GitHub:** [github.com/andriusgodeliauskas/app-english](https://github.com/andriusgodeliauskas/app-english)
+- **Domenas:** [english.godeliauskas.com](https://english.godeliauskas.com)
+- **FTP serveris:** altas.serveriai.lt → `/domains/english.godeliauskas.com/public_html`
 
-Jei GitHub saugykla yra visiškai nauja (tuščia), terminale vykdykite šias komandas būdami `app-english` kataloge:
+## Funkcionalumas
 
-1. **Inicijuokite Git:**
-   ```bash
-   git init
-   ```
+- **18 pamokų**, 150+ žodžių (flashcard mokymasis + quiz žaidimas)
+- **110 prizų** parduotuvė su žvaigždučių sistema (kainos 10–1000)
+- Web Speech API tarimas, konfeti efektai, streak bonusai
+- Duomenys saugomi naršyklės LocalStorage
 
-2. **Pridėkite visus failus:**
-   ```bash
-   git add .
-   ```
+## Deploy
 
-3. **Sukurkite pirmąjį komitą:**
-   ```bash
-   git commit -m "Initial commit: Children's English Learning Game"
-   ```
+```bash
+bash deploy.sh
+```
 
-4. **Nustatykite pagrindinę šaką:**
-   ```bash
-   git branch -M main
-   ```
+Arba rankiniu būdu: tiesiog įkelti `index.html` į FTP serverį.
 
-5. **Pridėkite nuotolinę saugyklą:**
-   ```bash
-   git remote add origin https://github.com/andriusgodeliauskas/app-english.git
-   ```
+## Git
 
-6. **Išsiųskite failus:**
-   ```bash
-   git push -u origin main
-   ```
+```bash
+git add .
+git commit -m "Aprašymas"
+git push origin main
+```
 
----
-*Pastaba: Jei saugykla jau turi failų, prieš siunčiant gali tekti atlikti `git pull origin main`.*
+## Svarbu
+
+- `deploy.sh` — **nekelti į git** (turi FTP prisijungimus)

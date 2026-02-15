@@ -1,0 +1,6 @@
+# Deploy credentials
+deploy.sh
+.ftp-*
+
+# OS files
+.DS_Store
